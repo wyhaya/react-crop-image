@@ -1,0 +1,20 @@
+{
+  "name": "react-image-crop",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "parcel ./src/index.html"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "@types/styled-components": "^4.1.19",
+    "parcel-bundler": "^1.12.3",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "styled-components": "^4.3.2",
+    "typescript": "^3.6.3"
+  },
+  "repository": "https://github.com/wyhaya/react-image-crop.git",
+  "author": "wyhaya <wyhaya@gmail.com>",
+  "license": "MIT"
+}
