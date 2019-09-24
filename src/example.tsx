@@ -1,16 +1,33 @@
 
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import styled from 'styled-components'
 import Crop from '../lib/index'
 
-class Entry extends React.Component<any> {
+const Content = styled.div`
+    .option{
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 0;
+        right: 0;
+        border: 1px solid red;
+    }
+`
+
+class Entry extends React.Component {
 
     state = {
-        url: ''
+        url: '',
+        crop: {
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0
+        }
     }
 
     render() {
-        return <div>
+        return <Content>
             <input
                 type='file'
                 accept='image/*'
@@ -21,9 +38,33 @@ class Entry extends React.Component<any> {
                 }}
             />
             {
-                this.state.url && <Crop url={this.state.url} />
+                this.state.url && <Crop
+                    src={this.state.url}
+                    crop={this.state.crop}
+                    className='crop'
+                    option={
+                        <div
+                            className='option'
+                            onClick={(e) => {
+                                console.log(e)
+                            }}
+                        >
+                            Hello
+                        </div>
+                    }
+                    onInit={(crop) => {
+                        this.setState({
+                            crop
+                        })
+                    }}
+                    onChange={(crop) => {
+                        this.setState({
+                            crop
+                        })
+                    }}
+                />
             }
-        </div>
+        </Content>
     }
 
 }

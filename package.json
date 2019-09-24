@@ -1,8 +1,13 @@
 {
-  "name": "react-image-crop",
+  "name": "react-crop-image",
   "version": "0.0.1",
+  "description": "React crop image component",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
-    "dev": "parcel ./src/index.html"
+    "dev": "parcel ./src/index.html",
+    "clear": "rm -rf ./dist/ && rm -rf ./.cache",
+    "build": "yarn clear && cp  && &&tsc"
   },
   "dependencies": {
     "@types/react": "^16.9.2",
@@ -14,7 +19,14 @@
     "styled-components": "^4.3.2",
     "typescript": "^3.6.3"
   },
-  "repository": "https://github.com/wyhaya/react-image-crop.git",
+  "keywords": [
+    "react",
+    "react-component",
+    "crop",
+    "image",
+    "node-modules"
+  ],
+  "repository": "https://github.com/wyhaya/react-crop-image.git",
   "author": "wyhaya <wyhaya@gmail.com>",
   "license": "MIT"
 }

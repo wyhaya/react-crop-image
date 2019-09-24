@@ -4,20 +4,14 @@ import styled from 'styled-components'
 import Select from './select'
 
 const Content = styled.div`
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, .3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    display: inline-block;
     user-select: none;
-    .content{
-        position: relative;
-    }
     img{
+        max-width: 100%;
+        max-height: 100%;
+        width: 100%;
+        height: 100%;
         display: block;
         pointer-events: none;
     }
@@ -29,71 +23,82 @@ const Content = styled.div`
     }
 `
 
+export type Crop = {
+    x: number
+    y: number
+    width: number
+    height: number
+}
+
 interface Props {
-    url: string
+    src: string
+    crop: Crop
+    option?: JSX.Element
+    onInit?: (crop: Crop) => void
+    onChange?: (crop: Crop) => void
+    className?: string
+    style?: React.CSSProperties
 }
 
 export default class Entry extends React.Component<Props> {
 
     state = {
         contentWidth: 0,
-        contentHeight: 0,
-        x: 0,
-        y: 0,
-        width: 200,
-        height: 200,
+        contentHeight: 0
     }
+    imgRef = React.createRef()
 
     componentDidMount() {
-        const img = new Image()
-        img.src = this.props.url
-        img.onload = (e) => {
+        this.imgRef.current.onload = (e) => {
+            let {width, height} = e.target
+            let max = width > height ? (height * .8) : (width * .8)
             this.setState({
-                contentWidth: e.target.width,
-                contentHeight: e.target.height
+                contentWidth: width,
+                contentHeight: height,
+            })
+            this.props.onInit && this.props.onInit({
+                width: max,
+                height: max,
+                x: (width - max) / 2,
+                y: (height - max) / 2
             })
         }
     }
 
     render() {
-        return <Content>
-            <div className='content'>
-                <img src={this.props.url} />
-                <svg viewBox={`0 0 ${this.state.contentWidth} ${this.state.contentHeight}`}>
-                    <path d={`
-                        M ${this.state.x} ${this.state.y} 
-                        l ${this.state.width + 2} 0 
-                        l 0 ${this.state.height + 2} 
-                        l -${this.state.width + 2} 0 
-                        l 0 -${this.state.height + 2}
-                        l -${this.state.x} 0
-                        l 0 ${this.state.contentHeight - this.state.y}
-                        l ${this.state.contentWidth} 0
-                        l 0 -${this.state.contentHeight}
-                        l -${this.state.contentWidth} 0
-                        l 0 ${this.state.y}
-                        `
-                    } />
-                </svg>
-                <Select
-                    x={this.state.x}
-                    y={this.state.y}
-                    width={this.state.width}
-                    height={this.state.height}
-                    onChange={data => {
-                        if (
-                            data.x >= 0 &&
-                            data.y >= 0 &&
-                            this.state.contentWidth - 2 - data.x >= this.state.width &&
-                            this.state.contentHeight - 2 - data.y >= this.state.height
-                        ) {
-                            this.setState({
-                                ...data
-                            })
-                        }
-                    }}
-                />
-            </div>
+
+        const {x, y, width, height} = this.props.crop
+
+        return <Content 
+            className={this.props.className}
+            style={this.props.style}
+        >
+            <img src={this.props.src} ref={this.imgRef} />
+            <svg viewBox={`0 0 ${this.state.contentWidth} ${this.state.contentHeight}`}>
+                <path d={`
+                    M ${x} ${y} 
+                    l ${width + 2} 0 
+                    l 0 ${height + 2} 
+                    l -${width + 2} 0 
+                    l 0 -${height + 2}
+                    l -${x} 0
+                    l 0 ${this.state.contentHeight - y}
+                    l ${this.state.contentWidth} 0
+                    l 0 -${this.state.contentHeight}
+                    l -${this.state.contentWidth} 0
+                    l 0 ${y}
+                    `
+                } />
+            </svg>
+            <Select
+                {...this.props.crop}
+                contentWidth={this.state.contentWidth}
+                contentHeight={this.state.contentHeight}
+                option={this.props.option}
+                onChange={data => {
+                    this.props.onChange && this.props.onChange(data)
+                }}
+            />
         </Content>
     }
 }

@@ -10,6 +10,7 @@ const Content = styled.div`
     .line{
         border: 1px dashed #d4d4d4;
         position: absolute;
+        pointer-events: none;
         &.one {
             width: 100%;
             top: 33.33333%;
@@ -62,6 +63,9 @@ interface Props {
     y: number
     width: number
     height: number
+    contentWidth: number
+    contentHeight: number
+    option?: JSX.Element
     onChange: (data: {
         x: number
         y: number,
@@ -172,6 +176,8 @@ export default class Entry extends React.Component<Props> {
                 })}
             />
 
+            {this.props.option}
+
         </Content>
     }
 
@@ -196,17 +202,26 @@ export default class Entry extends React.Component<Props> {
             width: this.props.width,
             height: this.props.height,
         }, callBack())
-        this.setState({
-            mouseDown: {
-                clientX: e.clientX,
-                clientY: e.clientY
-            }
-        }, () => this.props.onChange(data))
+        if (
+            data.x >= 0 &&
+            data.y >= 0 &&
+            data.width >= 10 &&
+            data.height >= 10 &&
+            this.props.contentWidth - 2 - data.x >= this.props.width &&
+            this.props.contentHeight - 2 - data.y >= this.props.height
+        ) {
+            this.setState({
+                mouseDown: {
+                    clientX: e.clientX,
+                    clientY: e.clientY
+                }
+            }, () => this.props.onChange(data))
+        }
     }
 
     onMouseUp = (e) => {
         e.stopPropagation()
-        this.setState({
+        this.state.mouseDown !== null && this.setState({
             mouseDown: null
         })
     }
