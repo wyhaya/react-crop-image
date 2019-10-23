@@ -221,12 +221,12 @@ export default class Entry extends React.Component<Props> {
             data.y = 0
         }
         // right
-        if(data.x + this.props.width > this.props.contentWidth - 2) {
-            data.x = this.props.contentWidth - this.props.width - 2
+        if(data.x + this.props.width > this.props.contentWidth) {
+            data.x = this.props.contentWidth - this.props.width
         }
         // bottom
-        if(data.y + this.props.height > this.props.contentHeight - 2) {
-            data.y = this.props.contentHeight - this.props.height - 2
+        if(data.y + this.props.height > this.props.contentHeight) {
+            data.y = this.props.contentHeight - this.props.height
         }
         this.setState({
             mouseDown: {

@@ -7,6 +7,9 @@ const Content = styled.div`
     position: relative;
     display: inline-flex;
     user-select: none;
+    *{
+        box-sizing: border-box;
+    }
     img{
         max-width: 100%;
         max-height: 100%;
@@ -82,10 +85,10 @@ export default class Entry extends React.Component<Props> {
             <svg viewBox={`0 0 ${this.state.contentWidth} ${this.state.contentHeight}`}>
                 <path d={`
                     M ${x} ${y} 
-                    l ${width + 2} 0 
-                    l 0 ${height + 2} 
-                    l -${width + 2} 0 
-                    l 0 -${height + 2}
+                    l ${width} 0 
+                    l 0 ${height} 
+                    l -${width} 0
+                    l 0 -${height}
                     l -${x} 0
                     l 0 ${this.state.contentHeight - y}
                     l ${this.state.contentWidth} 0
