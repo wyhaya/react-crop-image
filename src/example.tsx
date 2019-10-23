@@ -39,6 +39,8 @@ class Entry extends React.Component {
             />
             {
                 this.state.url && <Crop
+                    // width={500}
+                    // height={308}
                     src={this.state.url}
                     crop={this.state.crop}
                     className='crop'
@@ -52,7 +54,8 @@ class Entry extends React.Component {
                             Hello
                         </div>
                     }
-                    onInit={(crop) => {
+                    onInit={(crop, imageWidth, imageHeight) => {
+                        console.log(imageWidth, imageHeight)
                         this.setState({
                             crop
                         })

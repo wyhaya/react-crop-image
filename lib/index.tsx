@@ -5,13 +5,11 @@ import Select from './select'
 
 const Content = styled.div`
     position: relative;
-    display: inline-block;
+    display: inline-flex;
     user-select: none;
     img{
         max-width: 100%;
         max-height: 100%;
-        width: 100%;
-        height: 100%;
         display: block;
         pointer-events: none;
     }
@@ -32,9 +30,11 @@ export type Crop = {
 
 interface Props {
     src: string
+    width?: number
+    height?: number
     crop: Crop
     option?: JSX.Element
-    onInit?: (crop: Crop) => void
+    onInit?: (crop: Crop, imageWidth: number, imageHeight: number) => void
     onChange?: (crop: Crop) => void
     className?: string
     style?: React.CSSProperties
@@ -46,11 +46,11 @@ export default class Entry extends React.Component<Props> {
         contentWidth: 0,
         contentHeight: 0
     }
-    imgRef = React.createRef()
+    imgRef = React.createRef<HTMLImageElement>()
 
     componentDidMount() {
-        this.imgRef.current.onload = (e) => {
-            let {width, height} = e.target
+        this.imgRef.current.onload = () => {
+            let { width, height } = this.imgRef.current
             let max = width > height ? (height * .8) : (width * .8)
             this.setState({
                 contentWidth: width,
@@ -61,19 +61,24 @@ export default class Entry extends React.Component<Props> {
                 height: max,
                 x: (width - max) / 2,
                 y: (height - max) / 2
-            })
+            }, width, height)
         }
     }
 
     render() {
 
-        const {x, y, width, height} = this.props.crop
+        const { x, y, width, height } = this.props.crop
 
-        return <Content 
+        return <Content
             className={this.props.className}
             style={this.props.style}
         >
-            <img src={this.props.src} ref={this.imgRef} />
+            <img
+                src={this.props.src}
+                ref={this.imgRef}
+                width={this.props.width}
+                height={this.props.height}
+            />
             <svg viewBox={`0 0 ${this.state.contentWidth} ${this.state.contentHeight}`}>
                 <path d={`
                     M ${x} ${y} 

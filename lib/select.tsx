@@ -80,6 +80,9 @@ export default class Entry extends React.Component<Props> {
         mouseDown: null,
     }
 
+    cropMinWidth = 10
+    cropMinHeight = 10
+
     render() {
 
         const baseProps = {
@@ -202,21 +205,35 @@ export default class Entry extends React.Component<Props> {
             width: this.props.width,
             height: this.props.height,
         }, callBack())
-        if (
-            data.x >= 0 &&
-            data.y >= 0 &&
-            data.width >= 10 &&
-            data.height >= 10 &&
-            this.props.contentWidth - 2 - data.x >= this.props.width &&
-            this.props.contentHeight - 2 - data.y >= this.props.height
-        ) {
-            this.setState({
-                mouseDown: {
-                    clientX: e.clientX,
-                    clientY: e.clientY
-                }
-            }, () => this.props.onChange(data))
+    
+        if(data.width < this.cropMinWidth) {
+            data.width = this.cropMinWidth
         }
+        if(data.height < this.cropMinHeight) {
+            data.height = this.cropMinHeight
+        }
+        // left
+        if(data.x < 0) {
+            data.x = 0
+        }
+        // top
+        if(data.y < 0) {
+            data.y = 0
+        }
+        // right
+        if(data.x + this.props.width > this.props.contentWidth - 2) {
+            data.x = this.props.contentWidth - this.props.width - 2
+        }
+        // bottom
+        if(data.y + this.props.height > this.props.contentHeight - 2) {
+            data.y = this.props.contentHeight - this.props.height - 2
+        }
+        this.setState({
+            mouseDown: {
+                clientX: e.clientX,
+                clientY: e.clientY
+            }
+        }, () => this.props.onChange(data))
     }
 
     onMouseUp = (e) => {

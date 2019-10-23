@@ -3,7 +3,7 @@
 
 React crop image component
 
-![2](https://user-images.githubusercontent.com/23690145/65479785-7422c180-dec1-11e9-99e5-e29411ab9e55.png)
+![preview](https://user-images.githubusercontent.com/23690145/65479785-7422c180-dec1-11e9-99e5-e29411ab9e55.png)
 
 ## Install
 
@@ -26,7 +26,7 @@ import Crop from '@wyhaya/react-crop-image'
     // Additional content
     option={<div>Hello</div>}
     // Default area
-    onInit={(crop) => this.setState({
+    onInit={(crop, imageWidth, imageHeight) => this.setState({
         crop
     })}
     // Change area
@@ -34,6 +34,20 @@ import Crop from '@wyhaya/react-crop-image'
         crop
     })}
 />
+```
+
+```typescript
+interface Props {
+    src: string;
+    width?: number;
+    height?: number;
+    crop: Crop;
+    option?: JSX.Element;
+    onInit?: (crop: Crop, imageWidth: number, imageHeight: number) => void;
+    onChange?: (crop: Crop) => void;
+    className?: string;
+    style?: React.CSSProperties;
+}
 ```
 
 
