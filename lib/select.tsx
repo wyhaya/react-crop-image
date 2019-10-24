@@ -38,22 +38,22 @@ const Content = styled.div`
         background-color: #1396ed;
         position: absolute;
         &.top{
-            top: -3px;
+            top: -4px;
         }
         &.center{
             top: calc(50% - 3px);
         }
         &.bottom{
-            bottom: -3px;
+            bottom: -4px;
         }
         &.x-left{
-            left: -3px;
+            left: -4px;
         }
         &.x-center{
             left: calc(50% - 3px);
         }
         &.x-right{
-            right: -3px;
+            right: -4px;
         }
     }
 `
@@ -74,22 +74,39 @@ interface Props {
     }) => void
 }
 
+enum MoveDirection {
+    Position,
+    LeftTop,
+    TopCenter,
+    RightTop,
+    LeftCenter,
+    RightCenter,
+    LeftBottom,
+    BottomCenter,
+    RightBottom
+}
+
 export default class Entry extends React.Component<Props> {
 
     state = {
         mouseDown: null,
+        moveDirection: null
     }
 
     cropMinWidth = 10
     cropMinHeight = 10
 
-    render() {
+    componentDidMount() {
+        document.body.addEventListener('mousemove', this.onMouseMove)
+        document.body.addEventListener('mouseup', this.onMouseUp)
+    }
 
-        const baseProps = {
-            onMouseDown: this.onMouseDown,
-            onMouseUp: this.onMouseUp,
-            onMouseOut: this.onMouseUp
-        }
+    componentWillUnmount() {
+        document.body.removeEventListener('mousemove', this.onMouseMove)
+        document.body.removeEventListener('mouseup', this.onMouseUp)
+    }
+
+    render() {
 
         return <Content
             style={{
@@ -98,13 +115,7 @@ export default class Entry extends React.Component<Props> {
                 width: `${this.props.width}px`,
                 height: `${this.props.height}px`,
             }}
-            {...baseProps}
-            onMouseMove={(e) => this.onMouseMove(e, () => {
-                return {
-                    x: this.props.x + (e.clientX - this.state.mouseDown.clientX),
-                    y: this.props.y + (e.clientY - this.state.mouseDown.clientY),
-                }
-            })}
+            onMouseDown={(e) => this.onMouseDown(e, MoveDirection.Position)}
         >
 
             <div className='line one' />
@@ -112,120 +123,116 @@ export default class Entry extends React.Component<Props> {
             <div className='line three' />
             <div className='line four' />
 
-            <div className='dot top x-left' style={{ cursor: 'nwse-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        x: this.props.x + (e.clientX - this.state.mouseDown.clientX),
-                        y: this.props.y + (e.clientY - this.state.mouseDown.clientY),
-                        width: this.props.width - (e.clientX - this.state.mouseDown.clientX),
-                        height: this.props.height - (e.clientY - this.state.mouseDown.clientY),
-                    }
-                })}
-            />
-            <div className='dot top x-center' style={{ cursor: 'ns-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        y: this.props.y + (e.clientY - this.state.mouseDown.clientY),
-                        height: this.props.height - (e.clientY - this.state.mouseDown.clientY),
-                    }
-                })}
-            />
-            <div className='dot top x-right' style={{ cursor: 'nesw-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        y: this.props.y + (e.clientY - this.state.mouseDown.clientY),
-                        width: this.props.width + (e.clientX - this.state.mouseDown.clientX),
-                        height: this.props.height - (e.clientY - this.state.mouseDown.clientY),
-                    }
-                })}
-            />
-            <div className='dot center x-left' style={{ cursor: 'ew-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        x: this.props.x + (e.clientX - this.state.mouseDown.clientX),
-                        width: this.props.width - (e.clientX - this.state.mouseDown.clientX),
-                    }
-                })}
-            />
-            <div className='dot center x-right' style={{ cursor: 'ew-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        width: this.props.width + (e.clientX - this.state.mouseDown.clientX)
-                    }
-                })}
-            />
-            <div className='dot bottom x-left' style={{ cursor: 'nesw-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        x: this.props.x + (e.clientX - this.state.mouseDown.clientX),
-                        width: this.props.width - (e.clientX - this.state.mouseDown.clientX),
-                        height: this.props.height + (e.clientY - this.state.mouseDown.clientY),
-                    }
-                })}
-            />
-            <div className='dot bottom x-center' style={{ cursor: 'ns-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        height: this.props.height + (e.clientY - this.state.mouseDown.clientY)
-                    }
-                })}
-            />
-            <div className='dot bottom x-right' style={{ cursor: 'nwse-resize' }} {...baseProps}
-                onMouseMove={(e) => this.onMouseMove(e, () => {
-                    return {
-                        width: this.props.width + (e.clientX - this.state.mouseDown.clientX),
-                        height: this.props.height + (e.clientY - this.state.mouseDown.clientY)
-                    }
-                })}
-            />
+            <div className='dot top x-left' style={{ cursor: 'nwse-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.LeftTop)} />
+            <div className='dot top x-center' style={{ cursor: 'ns-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.TopCenter)} />
+            <div className='dot top x-right' style={{ cursor: 'nesw-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.RightTop)} />
+            <div className='dot center x-left' style={{ cursor: 'ew-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.LeftCenter)} />
+            <div className='dot center x-right' style={{ cursor: 'ew-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.RightCenter)} />
+            <div className='dot bottom x-left' style={{ cursor: 'nesw-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.LeftBottom)} />
+            <div className='dot bottom x-center' style={{ cursor: 'ns-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.BottomCenter)} />
+            <div className='dot bottom x-right' style={{ cursor: 'nwse-resize' }} onMouseDown={(e) => this.onMouseDown(e, MoveDirection.RightBottom)} />
 
             {this.props.option}
 
         </Content>
     }
 
-    onMouseDown = (e) => {
+    onMouseDown = (e, direction: MoveDirection) => {
         e.stopPropagation()
         this.setState({
             mouseDown: {
                 clientX: e.clientX,
                 clientY: e.clientY
-            }
+            },
+            moveDirection: direction
         })
     }
 
-    onMouseMove = (e, callBack) => {
+    onMouseMove = (e) => {
         e.stopPropagation()
         if (this.state.mouseDown === null) {
             return false
         }
-        let data = Object.assign({
+
+        // Direction of movement
+        let data = {
             x: this.props.x,
             y: this.props.y,
             width: this.props.width,
             height: this.props.height,
-        }, callBack())
-    
-        if(data.width < this.cropMinWidth) {
+        }
+
+        switch (this.state.moveDirection) {
+            case MoveDirection.Position: {
+                data.x = this.props.x + (e.clientX - this.state.mouseDown.clientX)
+                data.y = this.props.y + (e.clientY - this.state.mouseDown.clientY)
+                break
+            }
+            case MoveDirection.LeftTop: {
+                data.x = this.props.x + (e.clientX - this.state.mouseDown.clientX)
+                data.y = this.props.y + (e.clientY - this.state.mouseDown.clientY)
+                data.width = this.props.width - (e.clientX - this.state.mouseDown.clientX)
+                data.height = this.props.height - (e.clientY - this.state.mouseDown.clientY)
+                break
+            }
+            case MoveDirection.TopCenter: {
+                data.y = this.props.y + (e.clientY - this.state.mouseDown.clientY)
+                data.height = this.props.height - (e.clientY - this.state.mouseDown.clientY)
+                break
+            }
+            case MoveDirection.RightTop: {
+                data.y = this.props.y + (e.clientY - this.state.mouseDown.clientY)
+                data.width = this.props.width + (e.clientX - this.state.mouseDown.clientX)
+                data.height = this.props.height - (e.clientY - this.state.mouseDown.clientY)
+                break
+            }
+            case MoveDirection.LeftCenter: {
+                data.x = this.props.x + (e.clientX - this.state.mouseDown.clientX)
+                data.width = this.props.width - (e.clientX - this.state.mouseDown.clientX)
+                break
+            }
+            case MoveDirection.RightCenter: {
+                data.width = this.props.width + (e.clientX - this.state.mouseDown.clientX)
+                break
+            }
+            case MoveDirection.LeftBottom: {
+                data.x = this.props.x + (e.clientX - this.state.mouseDown.clientX)
+                data.width = this.props.width - (e.clientX - this.state.mouseDown.clientX)
+                data.height = this.props.height + (e.clientY - this.state.mouseDown.clientY)
+                break
+            }
+            case MoveDirection.BottomCenter: {
+                data.height = this.props.height + (e.clientY - this.state.mouseDown.clientY)
+                break
+            }
+            case MoveDirection.RightBottom: {
+                data.width = this.props.width + (e.clientX - this.state.mouseDown.clientX)
+                data.height = this.props.height + (e.clientY - this.state.mouseDown.clientY)
+            }
+        }
+
+        // Restrict moving area
+
+        if (data.width < this.cropMinWidth) {
             data.width = this.cropMinWidth
         }
-        if(data.height < this.cropMinHeight) {
+        if (data.height < this.cropMinHeight) {
             data.height = this.cropMinHeight
         }
         // left
-        if(data.x < 0) {
+        if (data.x < 0) {
             data.x = 0
         }
         // top
-        if(data.y < 0) {
+        if (data.y < 0) {
             data.y = 0
         }
         // right
-        if(data.x + this.props.width > this.props.contentWidth) {
+        if (data.x + this.props.width > this.props.contentWidth) {
             data.x = this.props.contentWidth - this.props.width
         }
         // bottom
-        if(data.y + this.props.height > this.props.contentHeight) {
+        if (data.y + this.props.height > this.props.contentHeight) {
             data.y = this.props.contentHeight - this.props.height
         }
         this.setState({

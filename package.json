@@ -1,6 +1,6 @@
 {
   "name": "@wyhaya/react-crop-image",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React crop image component",
   "main": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
