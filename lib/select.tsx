@@ -213,12 +213,22 @@ export default class Entry extends React.Component<Props> {
 
         // Restrict moving area
 
+        // min
         if (data.width < this.cropMinWidth) {
             data.width = this.cropMinWidth
         }
         if (data.height < this.cropMinHeight) {
             data.height = this.cropMinHeight
         }
+
+        // max
+        if (data.width > this.props.contentWidth) {
+            data.width = this.props.contentWidth
+        }
+        if (data.height > this.props.contentHeight) {
+            data.height = this.props.contentHeight
+        }
+
         // left
         if (data.x < 0) {
             data.x = 0
